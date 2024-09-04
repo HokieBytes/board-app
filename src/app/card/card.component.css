@@ -1,0 +1,15 @@
+.card {
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* width: 325px;  
+    height: 325px; */
+  }
+
+  
+  .card-header-image {
+    background-image: var (--image-ur);
+    background-size: cover;
+  }

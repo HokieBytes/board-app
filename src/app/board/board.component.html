@@ -1,0 +1,12 @@
+<div class="board">
+  <div
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    class="board-columns"
+    (cdkDropListDropped)="dropGrid($event)"
+  >
+    <div cdkDragLockAxis="x" *ngFor="let list of board.lists" cdkDrag>
+      <app-list [list]="list" [allLists]="board.lists"></app-list>
+    </div>
+  </div>
+</div>
