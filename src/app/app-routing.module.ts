@@ -4,7 +4,8 @@ import { BoardCollectionComponent } from './board-collection/board-collection.co
 import { BoardComponent } from './board/board.component';
 
 const routes: Routes = [
-  {"path": "", "component": BoardCollectionComponent},
+  // {"path": "", "component": BoardCollectionComponent},
+  {"path": "", "component": BoardComponent},
   {"path": "board/:id", "component": BoardComponent},
 ];
 
