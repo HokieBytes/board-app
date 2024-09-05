@@ -14,52 +14,70 @@ import { BoardService } from '../board-service';
   styleUrls: ['./list.component.css'],
 })
 export class ListComponent implements OnInit {
-  
   @Input() list!: List;
-
   @Input() allLists: List[] = [];
-  
   connectedTo: string[] = [];
 
   constructor() {}
 
   ngOnInit(): void {
-    this.connectedTo = this.allLists.map((list) => list.id.toString());
+    this.setConnectedLists();
   }
 
-  drop(event: CdkDragDrop<Card[]>) {
+  setConnectedLists(): void {
+    this.connectedTo = this.allLists.map(list => `list-${list.id}`);
+  }
 
-    console.log('Drop event:', event);
+  drop(event: CdkDragDrop<Card[]>): void {
+    // Log relevant parts of the event object
+    console.log('drop event:', {
+      previousIndex: event.previousIndex,
+      currentIndex: event.currentIndex,
+      previousContainerId: event.previousContainer.id,
+      currentContainerId: event.container.id,
+    });
 
-    const previousIndex = event.previousIndex;
-    const currentIndex = event.currentIndex;
+    const sourceListId = +event.previousContainer.id.replace('list-', '');
+    const targetListId = +event.container.id.replace('list-', '');
 
-    // Check if previousIndex is within bounds
-    if (previousIndex < 0 || previousIndex >= event.previousContainer.data.length) {
-      console.error('Invalid previous index:', previousIndex, 'Data length:', event.previousContainer.data.length);
-      //return;
-    }
+    const sourceList = this.allLists.find(list => list.id === sourceListId)?.cards || [];
+    const targetList = this.allLists.find(list => list.id === targetListId)?.cards || [];
 
-    // Check if currentIndex is within bounds
-    if (currentIndex < 0 || currentIndex > event.container.data.length) {
-      console.error('Invalid current index:', currentIndex, 'Data length:', event.container.data.length);
-      //return;
-    }
+    // Calculate the relative indices within the source and target lists
+    const sourceIndex = event.previousIndex;
+    const targetIndex = event.currentIndex;
+
+    console.log('sourceIndex:', sourceIndex, 'targetIndex:', targetIndex);
 
     if (event.previousContainer === event.container) {
-      // Move item within the same container
-      moveItemInArray(event.container.data, previousIndex, currentIndex);
+      moveItemInArray(targetList, sourceIndex, targetIndex);
     } else {
-      // Transfer item between containers 
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+      transferArrayItem(sourceList, targetList, sourceIndex, targetIndex);
     }
 
-    console.log('Updated previous container data:', event.previousContainer.data);
-    console.log('Updated current container data:', event.container.data);
+    // Update the lists to reflect the changes
+    this.allLists = this.allLists.map(list => {
+      if (list.id === sourceListId) {
+        return { ...list, cards: [...sourceList] }; // Ensure a new array is created
+      } else if (list.id === targetListId) {
+        return { ...list, cards: [...targetList] }; // Ensure a new array is created
+      }
+      return list;
+    });
+
+    // Log the updated lists for debugging
+    console.log('Updated allLists:', this.allLists);
+  }
+
+  // Helper method to get the start index of a list within the board
+  getListStartIndex(listId: number): number {
+    let startIndex = 0;
+    for (const list of this.allLists) {
+      if (list.id === listId) {
+        break;
+      }
+      startIndex += list.cards.length;
+    }
+    return startIndex;
   }
 }

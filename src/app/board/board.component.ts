@@ -12,7 +12,7 @@ export class BoardComponent {
   board: any;
   
   constructor(boardService: BoardService) {
-     this.board =  boardService.getBoardById(1) as any;  
+     this.board =  boardService.getBoardById(1);  
   }
 
   public dropGrid(event: CdkDragDrop<string[]>): void {
