@@ -16,11 +16,13 @@
 
 .drag-preview {
   opacity: 0.8; /* Adjust the opacity of the drag preview */
+  width: 200px; /* Ensure it mirrors the actual card size */
+    min-height: 60px; /* Align with the card's height */
 }
 
 .drag-placeholder {
   background: rgba(0, 0, 0, 0.1); /* Adjust the background of the placeholder */
   border: 2px dashed #ccc; /* Adjust the border of the placeholder */
-  min-width: 200px; /* Ensure the placeholder has the same width as the list */
-  height: 100%; /* Ensure the placeholder has the same height as the list */
+  width: 200px; /* Ensure the placeholder has the same width as the list for consistency */
+  min-height: 60px; /* Make sure there's a base height */
 }

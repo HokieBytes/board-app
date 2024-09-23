@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import {Board} from './models/board';
-import {List} from './models/list';
-import {Card} from './models/card';
 import { BOARDS } from './board-data';
-import { BoardSummary } from './models/board-summary';
 
 
 @Injectable({
   providedIn: 'root'
 })
 
-/* Mock service until we build a bakend http service */ 
+/* Mock service until we build a bakend http service */
 
 export class BoardService {
 
@@ -22,10 +19,9 @@ export class BoardService {
     //       category: board.category
     //     }));
     //   }
-    
+
 
     getBoardById(id: number): Board{
-        console.log(" %%%%%% getBoardById");
         return BOARDS.find((board: { id: number; }) => board.id === id)!;
     }
 

@@ -6,7 +6,7 @@ export const LIST_TYPES: string [] = ["todo", "done", "inprogress"];
 export const CARD_THUMBNAILS: any[] = ["https://material.angular.io/assets/img/examples/shiba2.jpg", "", "https://material.angular.io/assets/img/examples/shiba2.jpg"];
 export const CARD_PICS: any[] = ["https://material.angular.io/assets/img/examples/shiba2.jpg", "" , "https://material.angular.io/assets/img/examples/shiba2.jpg"];
 
-export const BOARDS: any = [
+export const BOARDS: any = [  
     {
         id: 1,
         name: 'Board 1',

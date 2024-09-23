@@ -1,83 +1,56 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { List } from '../models/list';
+import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Card } from '../models/card';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
-import { BoardService } from '../board-service';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.css'],
+    selector: 'app-list',
+    templateUrl: './list.component.html',
+    styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit {
-  @Input() list!: List;
-  @Input() allLists: List[] = [];
-  connectedTo: string[] = [];
+export class ListComponent {
+    @Input() list?: { id: number; name: string; cards: Card[] };
+    @Input() allLists?: any[];
 
-  constructor() {}
+    constructor(private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.setConnectedLists();
-  }
-
-  setConnectedLists(): void {
-    this.connectedTo = this.allLists.map(list => `list-${list.id}`);
-  }
-
-  drop(event: CdkDragDrop<Card[]>): void {
-    // Log relevant parts of the event object
-    console.log('drop event:', {
-      previousIndex: event.previousIndex,
-      currentIndex: event.currentIndex,
-      previousContainerId: event.previousContainer.id,
-      currentContainerId: event.container.id,
-    });
-
-    const sourceListId = +event.previousContainer.id.replace('list-', '');
-    const targetListId = +event.container.id.replace('list-', '');
-
-    const sourceList = this.allLists.find(list => list.id === sourceListId)?.cards || [];
-    const targetList = this.allLists.find(list => list.id === targetListId)?.cards || [];
-
-    // Calculate the relative indices within the source and target lists
-    const sourceIndex = event.previousIndex;
-    const targetIndex = event.currentIndex;
-
-    console.log('sourceIndex:', sourceIndex, 'targetIndex:', targetIndex);
-
-    if (event.previousContainer === event.container) {
-      moveItemInArray(targetList, sourceIndex, targetIndex);
-    } else {
-      transferArrayItem(sourceList, targetList, sourceIndex, targetIndex);
+    get connectedTo(): (string | CdkDropList<any>)[] {
+        return this.allLists ? this.allLists.map(list => `list-${list.id}`) : [];
     }
 
-    // Update the lists to reflect the changes
-    this.allLists = this.allLists.map(list => {
-      if (list.id === sourceListId) {
-        return { ...list, cards: [...sourceList] }; // Ensure a new array is created
-      } else if (list.id === targetListId) {
-        return { ...list, cards: [...targetList] }; // Ensure a new array is created
-      }
-      return list;
-    });
+    drop(event: CdkDragDrop<Card[]>) {
+      console.log('Drop event:', event);
 
-    // Log the updated lists for debugging
-    console.log('Updated allLists:', this.allLists);
-  }
+      // Check if event.item.data is correct
+      console.log('Dragged Item:', event.item.data);
 
-  // Helper method to get the start index of a list within the board
-  getListStartIndex(listId: number): number {
-    let startIndex = 0;
-    for (const list of this.allLists) {
-      if (list.id === listId) {
-        break;
+      // Extra verification - Ensure `item` data correctness:
+      console.log('Item Element Data:', event.item.element.nativeElement);
+
+      if (!event.item.data) {
+        console.error('event.item.data is undefined');
+        return;
       }
-      startIndex += list.cards.length;
+
+      // Log initial state
+      console.log('Initial Previous Container Data:', event.previousContainer.data);
+      console.log('Initial Current Container Data:', event.container.data);
+
+      if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      } else {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      }
+
+      // Log after state change
+      console.log('Updated Previous Container Data:', event.previousContainer.data);
+      console.log('Updated Current Container Data:', event.container.data);
+
+      // Manually trigger change detection to update the UI
+      this.cdr.detectChanges();
     }
-    return startIndex;
-  }
 }

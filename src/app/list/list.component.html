@@ -1,14 +1,21 @@
 <div class="list">
-  <h2 cdkDragHandle>{{ list.name }}</h2>
-  <div class="cards" id="list-{{list.id}}"
+  <h2 cdkDragHandle>{{ list?.name }}</h2>
+  <div
+    class="cards"
+    id="list-{{ list?.id }}"
     cdkDropList
     [cdkDropListConnectedTo]="connectedTo"
-    [cdkDropListData]="list.cards"
-    (cdkDropListDropped)="drop($event)">
-    <div *ngIf="list.cards.length === 0" class="empty-placeholder">
+    [cdkDropListData]="list?.cards ?? []"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div *ngIf="list?.cards?.length === 0" class="empty-placeholder">
       Drop cards here
     </div>
-    <div *ngFor="let card of list.cards; let i = index" cdkDrag [cdkDragData]="{ card: card, index: i }">
+    <div
+      *ngFor="let card of list?.cards; let i = index"
+      cdkDrag
+      [cdkDragData]="card"
+    >
       <app-card [card]="card"></app-card>
     </div>
   </div>
